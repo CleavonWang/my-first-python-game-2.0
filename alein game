@@ -1,0 +1,62 @@
+import pgzrun
+
+WIDTH = 800
+HEIGHT = 900
+
+alien = Actor('alien')
+alien.pos = 100,50
+
+misses=0
+highscore = 0
+
+WIDTH = 1000
+HEIGHT = alien.height + 500
+
+def draw():
+    global misses
+    global highscore
+    screen.clear()
+    alien.draw()
+    screen.draw.text('Misses: ' + str(round(misses)), [15,10], color=(255,255,255), fontsize=30)
+    screen.draw.text('Highscore: ' + str(round(highscore)), [20,100], color=(255,255,255), fontsize=30)
+
+
+def update():
+    alien.left += 2
+    if alien.left > WIDTH:
+        alien.right = 0
+
+#--------------------------
+
+def on_mouse_down(pos):
+    global misses
+    global highscore
+    if alien.collidepoint(pos):
+        set_alien_shot()
+        highscore = highscore+1
+        sounds.shotgun.play()
+    else:
+        misses = misses+1
+        if misses==10:
+            screen.clear()
+            screen.draw.text("GAME OVER", [WIDTH*2/5, HEIGHT/2])
+            screen.draw.text('press "r" to restart',[180,200])
+    
+            if keyboard.r:
+                highscore = 0
+                misses = 0
+                draw()
+    
+
+
+
+def set_alien_normal():
+    alien.image = 'alien'
+
+
+def set_alien_shot():
+    alien.image = 'alien shot'
+    clock.schedule_unique(set_alien_normal, 0.5)
+
+
+pgzrun.go()
